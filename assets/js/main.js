@@ -4,15 +4,10 @@
 	function setProductFilter(schedule, filterValue) {
 		var filters = Array.prototype.slice.call(schedule.querySelectorAll('[data-home-product-filter]'));
 		var cards = Array.prototype.slice.call(schedule.querySelectorAll('[data-home-product-categories]'));
-		var select = schedule.querySelector('[data-home-product-select]');
 
 		filters.forEach(function (button) {
 			button.classList.toggle('is-active', button.dataset.homeProductFilter === filterValue);
 		});
-
-		if (select && select.value !== filterValue) {
-			select.value = filterValue;
-		}
 
 		cards.forEach(function (card) {
 			var categories = (card.dataset.homeProductCategories || '').split(',').filter(Boolean);
@@ -38,16 +33,6 @@
 				}
 
 				setProductFilter(schedule, button.dataset.homeProductFilter || 'all');
-			});
-
-			schedule.addEventListener('change', function (event) {
-				var select = event.target.closest('[data-home-product-select]');
-
-				if (!select || !schedule.contains(select)) {
-					return;
-				}
-
-				setProductFilter(schedule, select.value || 'all');
 			});
 
 			setProductFilter(schedule, schedule.dataset.homeDefaultFilter || 'all');
