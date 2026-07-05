@@ -563,23 +563,46 @@
 	gap: 14px;
 	width: min(860px, 100%);
 	margin: 4px auto 0;
+	text-align: left;
+}
+
+.home-form__embed .fluentform,
+.home-form__embed .frm-fluent-form,
+.home-form__embed form {
+	width: 100%;
+}
+
+.home-form__embed .ff-el-group {
+	margin-bottom: 14px;
+}
+
+.home-form__embed .ff-el-input--label,
+.home-form__embed .ff-el-input--label label {
+	color: var(--color-ink);
+	font-size: 0.88rem;
+	font-weight: 700;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
 }
 
 .home-form__embed textarea,
 .home-form__embed input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]),
-.home-form__embed select {
+.home-form__embed select,
+.home-form__embed .ff-el-form-control {
 	width: 100%;
 	min-height: 48px;
 	padding: 12px 14px;
 	color: var(--color-ink);
 	background: rgba(247, 243, 236, 0.82);
 	border: 1px solid rgba(0, 0, 0, 0.32);
-	border-radius: 0;
+	border-radius: 0 !important;
+	box-shadow: none;
 	outline: none;
 	transition: border-color 0.3s ease, background-color 0.3s ease;
 }
 
-.home-form__embed textarea {
+.home-form__embed textarea,
+.home-form__embed .ff-el-form-control.ff-el-textarea {
 	min-height: 210px;
 	padding: 16px 18px;
 	line-height: 1.6;
@@ -588,19 +611,24 @@
 
 .home-form__embed textarea:focus,
 .home-form__embed input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):focus,
-.home-form__embed select:focus {
+.home-form__embed select:focus,
+.home-form__embed .ff-el-form-control:focus {
 	background: var(--color-white);
 	border-color: var(--color-red);
+	box-shadow: none;
 }
 
 .home-form__embed button,
-.home-form__embed input[type="submit"] {
+.home-form__embed input[type="submit"],
+.home-form__embed .ff-btn-submit {
 	justify-self: center;
 	min-height: 52px;
 	padding: 0 34px;
 	color: var(--color-paper);
 	background: var(--color-red);
 	border: 1px solid var(--color-red);
+	border-radius: 0 !important;
+	box-shadow: none;
 	font-size: 0.88rem;
 	font-weight: 700;
 	letter-spacing: 0.08em;
@@ -609,10 +637,30 @@
 }
 
 .home-form__embed button:hover,
-.home-form__embed input[type="submit"]:hover {
+.home-form__embed input[type="submit"]:hover,
+.home-form__embed .ff-btn-submit:hover {
 	color: var(--color-red);
 	background: transparent;
 	transform: translateY(-1px);
+}
+
+.home-form__embed .ff-el-is-error .ff-el-form-control {
+	border-color: var(--color-red);
+}
+
+.home-form__embed .ff-el-help-message,
+.home-form__embed .ff-el-is-error .text-danger,
+.home-form__embed .ff-errors-in-stack {
+	color: var(--color-red);
+	font-size: 0.88rem;
+}
+
+.home-form__embed .ff-message-success {
+	color: var(--color-ink);
+	background: rgba(247, 243, 236, 0.82);
+	border: 1px solid rgba(0, 0, 0, 0.2);
+	border-radius: 0 !important;
+	box-shadow: none;
 }
 
 .home-form__after {
@@ -763,7 +811,8 @@
 	}
 
 	.home-form__embed button,
-	.home-form__embed input[type="submit"] {
+	.home-form__embed input[type="submit"],
+	.home-form__embed .ff-btn-submit {
 		justify-self: stretch;
 		width: 100%;
 	}
