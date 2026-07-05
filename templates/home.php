@@ -208,6 +208,229 @@ if ( ! function_exists( 'starter_home_posts' ) ) {
 	}
 }
 
+if ( ! function_exists( 'starter_home_fluent_form_shortcode' ) ) {
+	function starter_home_fluent_form_shortcode() {
+		if ( ! shortcode_exists( 'fluentform' ) ) {
+			return '';
+		}
+
+		$form_id = starter_home_fluent_form_id();
+
+		return $form_id ? sprintf( '[fluentform id="%d"]', $form_id ) : '';
+	}
+}
+
+if ( ! function_exists( 'starter_home_fluent_form_id' ) ) {
+	function starter_home_fluent_form_id() {
+		global $wpdb;
+
+		$forms_table = $wpdb->prefix . 'fluentform_forms';
+		$meta_table  = $wpdb->prefix . 'fluentform_form_meta';
+		$option_name = 'starter_home_fluent_form_id';
+
+		if ( $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $forms_table ) ) !== $forms_table ) {
+			return 0;
+		}
+
+		$form_id = absint( get_option( $option_name ) );
+
+		if ( $form_id && starter_home_fluent_form_exists( $form_id, $forms_table ) ) {
+			return $form_id;
+		}
+
+		$form_id = (int) $wpdb->get_var(
+			$wpdb->prepare(
+				"SELECT id FROM {$forms_table} WHERE title = %s LIMIT 1",
+				'Home Message Form'
+			)
+		);
+
+		if ( $form_id ) {
+			update_option( $option_name, $form_id, false );
+			return $form_id;
+		}
+
+		$form_fields = array(
+			'fields'       => array(
+				array(
+					'index'          => 0,
+					'element'        => 'textarea',
+					'attributes'     => array(
+						'name'        => 'message',
+						'value'       => '',
+						'id'          => '',
+						'class'       => '',
+						'placeholder' => 'Ostavite nam poruku',
+						'rows'        => 6,
+						'cols'        => 2,
+						'maxlength'   => '',
+					),
+					'settings'       => array(
+						'container_class'   => '',
+						'label'             => 'Poruka',
+						'admin_field_label' => 'Poruka',
+						'label_placement'   => 'hide_label',
+						'help_message'      => '',
+						'prefix_label'      => '',
+						'suffix_label'      => '',
+						'validation_rules'  => array(
+							'required' => array(
+								'value'          => true,
+								'message'        => 'This field is required',
+								'global_message' => 'This field is required',
+								'global'         => true,
+							),
+						),
+						'conditional_logics' => array(
+							'type'       => 'any',
+							'status'     => false,
+							'conditions' => array(
+								array(
+									'field'    => '',
+									'value'    => '',
+									'operator' => '',
+								),
+							),
+						),
+					),
+					'editor_options' => array(
+						'title'      => 'Text Area',
+						'icon_class' => 'ff-edit-textarea',
+						'template'   => 'inputTextarea',
+					),
+					'uniqElKey'     => 'starter_home_message',
+				),
+			),
+			'submitButton' => array(
+				'uniqElKey'      => 'starter_home_submit',
+				'element'        => 'button',
+				'attributes'     => array(
+					'type'  => 'submit',
+					'class' => '',
+				),
+				'settings'       => array(
+					'align'            => 'center',
+					'button_style'     => 'default',
+					'container_class'  => '',
+					'help_message'     => '',
+					'background_color' => '#bf2020',
+					'button_size'      => 'md',
+					'color'            => '#ffffff',
+					'button_ui'        => array(
+						'type'    => 'default',
+						'text'    => 'Posalji',
+						'img_url' => '',
+					),
+				),
+				'editor_options' => array(
+					'title' => 'Submit Button',
+				),
+			),
+		);
+
+		$inserted = $wpdb->insert(
+			$forms_table,
+			array(
+				'title'       => 'Home Message Form',
+				'status'      => 'published',
+				'form_fields' => wp_json_encode( $form_fields ),
+				'has_payment' => 0,
+				'type'        => 'form',
+				'created_by'  => get_current_user_id(),
+				'created_at'  => current_time( 'mysql' ),
+				'updated_at'  => current_time( 'mysql' ),
+			),
+			array( '%s', '%s', '%s', '%d', '%s', '%d', '%s', '%s' )
+		);
+
+		if ( ! $inserted ) {
+			return 0;
+		}
+
+		$form_id = (int) $wpdb->insert_id;
+
+		if ( $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $meta_table ) ) === $meta_table ) {
+			$form_settings = array(
+				'confirmation' => array(
+					'redirectTo'           => 'samePage',
+					'messageToShow'        => 'Hvala na poruci. Kontaktiracemo vas uskoro.',
+					'customPage'           => null,
+					'samePageFormBehavior' => 'hide_form',
+					'customUrl'            => null,
+				),
+				'restrictions' => array(
+					'limitNumberOfEntries' => array(
+						'enabled'        => false,
+						'numberOfEntries' => null,
+						'period'         => 'total',
+						'limitReachedMsg' => 'Maximum number of entries exceeded.',
+					),
+					'scheduleForm'         => array(
+						'enabled'      => false,
+						'start'        => null,
+						'end'          => null,
+						'pendingMsg'   => 'Form submission is not started yet.',
+						'expiredMsg'   => 'Form submission is now closed.',
+						'selectedDays' => array( 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday' ),
+					),
+					'requireLogin'         => array(
+						'enabled'         => false,
+						'requireLoginMsg' => 'You must be logged in to submit the form.',
+					),
+					'denyEmptySubmission'  => array(
+						'enabled' => false,
+						'message' => 'Sorry, you cannot submit an empty form.',
+					),
+				),
+				'layout'       => array(
+					'labelPlacement'        => 'top',
+					'helpMessagePlacement'  => 'with_label',
+					'errorMessagePlacement' => 'inline',
+					'cssClassName'          => '',
+					'asteriskPlacement'     => 'asterisk-right',
+				),
+			);
+
+			$wpdb->insert(
+				$meta_table,
+				array(
+					'form_id'  => $form_id,
+					'meta_key' => 'formSettings',
+					'value'    => wp_json_encode( $form_settings ),
+				),
+				array( '%d', '%s', '%s' )
+			);
+
+			$wpdb->insert(
+				$meta_table,
+				array(
+					'form_id'  => $form_id,
+					'meta_key' => 'template_name',
+					'value'    => 'starter_home_message',
+				),
+				array( '%d', '%s', '%s' )
+			);
+		}
+
+		update_option( $option_name, $form_id, false );
+
+		return $form_id;
+	}
+}
+
+if ( ! function_exists( 'starter_home_fluent_form_exists' ) ) {
+	function starter_home_fluent_form_exists( $form_id, $forms_table ) {
+		global $wpdb;
+
+		return (bool) $wpdb->get_var(
+			$wpdb->prepare(
+				"SELECT id FROM {$forms_table} WHERE id = %d LIMIT 1",
+				$form_id
+			)
+		);
+	}
+}
+
 get_header();
 
 while ( have_posts() ) :
@@ -369,7 +592,11 @@ while ( have_posts() ) :
 					<?php echo starter_home_text( starter_home_field( 'form_desc' ) ); ?>
 
 					<?php
-					$form_shortcode = starter_home_field( 'form_shortcode', '[fluentform id="1"]' );
+					$form_shortcode = trim( starter_home_field( 'form_shortcode', '' ) );
+
+					if ( '' === $form_shortcode || '[fluentform id="1"]' === $form_shortcode ) {
+						$form_shortcode = starter_home_fluent_form_shortcode();
+					}
 
 					if ( $form_shortcode && shortcode_exists( 'fluentform' ) ) :
 						?>
