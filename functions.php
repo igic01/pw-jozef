@@ -9,6 +9,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 define( 'STARTER_THEME_VERSION', '1.0.0' );
 
+require_once get_template_directory() . '/inc/acf-home.php';
+
 function starter_theme_setup() {
 	add_theme_support( 'title-tag' );
 	add_theme_support( 'post-thumbnails' );
