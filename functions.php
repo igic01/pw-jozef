@@ -66,28 +66,48 @@ if ( ! function_exists( 'starter_get_upcoming_products' ) ) {
 		$args = wp_parse_args(
 			$args,
 			array(
-				'status' => 'publish',
-				'limit'  => -1,
+				'status'             => 'publish',
+				'limit'              => -1,
+				'category'           => '',
+				'categories'         => '',
+				'exclude_category'   => '',
+				'exclude_categories' => '',
 			)
 		);
 
-		$products = wc_get_products(
-			array(
-				'status'     => $args['status'],
-				'limit'      => $args['limit'],
-				'meta_key'   => '_starter_product_date',
-				'orderby'    => 'meta_value',
-				'order'      => 'ASC',
-				'meta_query' => array(
-					array(
-						'key'     => '_starter_product_date',
-						'value'   => current_time( 'Y-m-d' ),
-						'compare' => '>=',
-						'type'    => 'DATE',
-					),
+		$query_args = array(
+			'status'     => $args['status'],
+			'limit'      => $args['limit'],
+			'meta_key'   => '_starter_product_date',
+			'orderby'    => 'meta_value',
+			'order'      => 'ASC',
+			'meta_query' => array(
+				array(
+					'key'     => '_starter_product_date',
+					'value'   => current_time( 'Y-m-d' ),
+					'compare' => '>=',
+					'type'    => 'DATE',
 				),
-			)
+			),
 		);
+
+		$selected_slugs = starter_parse_product_category_slugs( $args['category'], $args['categories'] );
+		$excluded_slugs = starter_parse_product_category_slugs( $args['exclude_category'], $args['exclude_categories'] );
+
+		if ( ! empty( $selected_slugs ) ) {
+			$query_args['category'] = $selected_slugs;
+		}
+
+		$products = wc_get_products( $query_args );
+
+		if ( ! empty( $excluded_slugs ) ) {
+			$products = array_filter(
+				$products,
+				function ( $product ) use ( $excluded_slugs ) {
+					return ! starter_product_has_category_slug( $product->get_id(), $excluded_slugs );
+				}
+			);
+		}
 
 		return array_values( array_map( 'starter_format_upcoming_product', $products ) );
 	}
@@ -99,16 +119,26 @@ if ( ! function_exists( 'starter_format_upcoming_product' ) ) {
 		$categories  = starter_get_product_category_data( $product_id );
 		$date        = $product->get_meta( '_starter_product_date' );
 		$difficulty  = $product->get_meta( '_starter_product_difficulty' );
+		$image_html  = $product->get_image( 'large', array( 'loading' => 'lazy' ) );
+
+		if ( ! $image_html && function_exists( 'wc_placeholder_img' ) ) {
+			$image_html = wc_placeholder_img( 'large' );
+		}
 
 		return array(
 			'id'               => $product_id,
 			'name'             => $product->get_name(),
 			'date'             => $date,
+			'display_date'     => starter_format_product_date( $date ),
 			'difficulty'       => '' === $difficulty ? null : absint( $difficulty ),
+			'difficulty_label' => starter_format_product_difficulty( $difficulty ),
 			'category'         => implode( ', ', wp_list_pluck( $categories, 'name' ) ),
 			'categories'       => $categories,
+			'category_slugs'   => wp_list_pluck( $categories, 'slug' ),
 			'link'             => get_permalink( $product_id ),
 			'add_to_cart_link' => $product->add_to_cart_url(),
+			'price_html'       => $product->get_price_html(),
+			'image_html'       => $image_html,
 		);
 	}
 }
@@ -136,5 +166,65 @@ if ( ! function_exists( 'starter_get_product_category_data' ) ) {
 				$terms
 			)
 		);
+	}
+}
+
+if ( ! function_exists( 'starter_parse_product_category_slugs' ) ) {
+	function starter_parse_product_category_slugs( $category, $categories = '' ) {
+		$raw = array();
+
+		if ( $category ) {
+			$raw = array_merge( $raw, (array) $category );
+		}
+
+		if ( $categories ) {
+			foreach ( (array) $categories as $category_group ) {
+				$raw = array_merge( $raw, explode( ',', $category_group ) );
+			}
+		}
+
+		$slugs = array();
+
+		foreach ( $raw as $value ) {
+			$slug = sanitize_title( wp_unslash( trim( $value ) ) );
+
+			if ( $slug ) {
+				$slugs[] = $slug;
+			}
+		}
+
+		return array_values( array_unique( $slugs ) );
+	}
+}
+
+if ( ! function_exists( 'starter_product_has_category_slug' ) ) {
+	function starter_product_has_category_slug( $product_id, $slugs ) {
+		$product_slugs = wp_list_pluck( starter_get_product_category_data( $product_id ), 'slug' );
+
+		return (bool) array_intersect( $product_slugs, (array) $slugs );
+	}
+}
+
+if ( ! function_exists( 'starter_format_product_date' ) ) {
+	function starter_format_product_date( $date ) {
+		if ( ! $date ) {
+			return '';
+		}
+
+		$timestamp = strtotime( $date );
+
+		return $timestamp ? wp_date( 'd.m.Y.', $timestamp ) : $date;
+	}
+}
+
+if ( ! function_exists( 'starter_format_product_difficulty' ) ) {
+	function starter_format_product_difficulty( $difficulty ) {
+		$difficulty = absint( $difficulty );
+
+		if ( $difficulty < 1 ) {
+			return '';
+		}
+
+		return str_repeat( '/', min( 5, $difficulty ) );
 	}
 }
