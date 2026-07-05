@@ -218,7 +218,7 @@ while ( have_posts() ) :
 	$section_3_images = starter_home_images( 'section_3_images', 3 );
 	$section_3_hero   = starter_home_field( 'section_3_hero' );
 	$section_3_style  = starter_home_image_url( $section_3_hero, 'full' );
-	$section_3_bg     = $section_3_style ? sprintf( ' style="%s"', esc_attr( '--home-voucher-bg: url(' . esc_url_raw( $section_3_style ) . ');' ) ) : '';
+	$form_bg          = $section_3_style ? sprintf( ' style="%s"', esc_attr( '--home-form-bg: url(' . esc_url_raw( $section_3_style ) . ');' ) ) : '';
 	$section_4_posts  = starter_home_posts();
 	$page_content     = trim( get_the_content() );
 	?>
@@ -281,41 +281,35 @@ while ( have_posts() ) :
 		</section>
 
 		<section class="home-section home-products">
-			<div class="home-products__inner">
-				<div class="home-section__heading">
-					<?php if ( starter_home_field( 'section_2_title' ) ) : ?>
-						<h2><?php echo wp_kses_post( starter_home_field( 'section_2_title' ) ); ?></h2>
-					<?php endif; ?>
-
-					<?php echo starter_home_text( starter_home_field( 'section_2_desc' ) ); ?>
-				</div>
-
-				<?php if ( shortcode_exists( 'paint_wine_products' ) ) : ?>
-					<div class="home-products__shortcode">
-						<?php echo do_shortcode( '[paint_wine_products exclude_category="pw-shop"]' ); ?>
-					</div>
-				<?php endif; ?>
-			</div>
+			<?php
+			if ( shortcode_exists( 'paint_wine_products' ) ) {
+				echo do_shortcode( '[paint_wine_products exclude_category="pw-shop"]' );
+			}
+			?>
 		</section>
 
-		<section class="home-section home-voucher"<?php echo $section_3_bg; ?>>
+		<section class="home-section home-voucher">
 			<div class="home-voucher__inner">
 				<div class="home-voucher__copy">
 					<?php if ( starter_home_field( 'section_3_title' ) ) : ?>
 						<h2><?php echo wp_kses_post( starter_home_field( 'section_3_title' ) ); ?></h2>
 					<?php endif; ?>
+
+					<?php echo starter_home_text( starter_home_field( 'section_3_desc', 'Tu je Paint and Wine' ) ); ?>
 				</div>
 
 				<?php if ( $section_3_images ) : ?>
 					<div class="home-voucher__stage" data-home-carousel>
-						<div class="home-voucher__track">
-							<?php foreach ( $section_3_images as $index => $image ) : ?>
-								<figure class="home-voucher__slide<?php echo 0 === $index ? ' is-active' : ''; ?>">
-									<div class="home-voucher__frame">
-										<?php starter_home_render_image( $image, '', 'large', sprintf( 'Voucher image %d', $index + 1 ) ); ?>
-									</div>
-								</figure>
-							<?php endforeach; ?>
+						<div class="home-voucher__carousel">
+							<div class="home-voucher__track">
+								<?php foreach ( $section_3_images as $index => $image ) : ?>
+									<figure class="home-voucher__slide<?php echo 0 === $index ? ' is-active' : ''; ?>">
+										<div class="home-voucher__frame">
+											<?php starter_home_render_image( $image, '', 'large', sprintf( 'Voucher image %d', $index + 1 ) ); ?>
+										</div>
+									</figure>
+								<?php endforeach; ?>
+							</div>
 						</div>
 
 						<?php if ( count( $section_3_images ) > 1 ) : ?>
@@ -366,7 +360,7 @@ while ( have_posts() ) :
 			</div>
 		</section>
 
-		<section class="home-section home-form">
+		<section class="home-section home-form"<?php echo $form_bg; ?>>
 			<div class="home-form__inner">
 				<div class="home-form__panel">
 					<?php if ( starter_home_field( 'form_title' ) ) : ?>
@@ -413,6 +407,12 @@ while ( have_posts() ) :
 					slides.forEach(function (slide, slideIndex) {
 						slide.classList.toggle("is-active", slideIndex === activeIndex);
 					});
+
+					const track = carousel.querySelector(".home-voucher__track");
+
+					if (track) {
+						track.style.transform = "translate3d(-" + (activeIndex * 100) + "%, 0, 0)";
+					}
 
 					if (dotsRoot) {
 						dotsRoot.querySelectorAll("button").forEach(function (dot, dotIndex) {
