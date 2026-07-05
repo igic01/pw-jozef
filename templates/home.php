@@ -17,6 +17,10 @@ if ( ! function_exists( 'starter_home_field' ) ) {
 			}
 		}
 
+		if ( function_exists( 'starter_home_acf_default_value' ) ) {
+			return starter_home_acf_default_value( $name, $default );
+		}
+
 		return $default;
 	}
 }
@@ -134,6 +138,7 @@ if ( ! function_exists( 'starter_home_render_image' ) ) {
 if ( ! function_exists( 'starter_home_posts' ) ) {
 	function starter_home_posts() {
 		$items = starter_home_field( 'section_4_posts', array() );
+		$default_image = function_exists( 'starter_home_acf_default_value' ) ? starter_home_acf_default_value( 'section_3_hero' ) : '';
 
 		if ( empty( $items ) || ! is_array( $items ) ) {
 			return array();
@@ -150,7 +155,7 @@ if ( ! function_exists( 'starter_home_posts' ) ) {
 				}
 
 				$posts[] = array(
-					'image' => get_post_thumbnail_id( $post ),
+					'image' => get_post_thumbnail_id( $post ) ?: $default_image,
 					'title' => get_the_title( $post ),
 					'desc'  => get_the_excerpt( $post ),
 					'url'   => get_permalink( $post ),
@@ -169,7 +174,7 @@ if ( ! function_exists( 'starter_home_posts' ) ) {
 					}
 
 					$posts[] = array(
-						'image' => get_post_thumbnail_id( $post ),
+						'image' => get_post_thumbnail_id( $post ) ?: $default_image,
 						'title' => get_the_title( $post ),
 						'desc'  => get_the_excerpt( $post ),
 						'url'   => get_permalink( $post ),
@@ -187,8 +192,11 @@ if ( ! function_exists( 'starter_home_posts' ) ) {
 					$url = $url['url'] ?? '';
 				}
 
+				$image = $item['img'] ?? $item['image'] ?? $item['post_img'] ?? '';
+				$image = $image ?: $default_image;
+
 				$posts[] = array(
-					'image' => $item['img'] ?? $item['image'] ?? $item['post_img'] ?? '',
+					'image' => $image,
 					'title' => $item['title'] ?? $item['post_title'] ?? '',
 					'desc'  => $item['desc'] ?? $item['description'] ?? $item['post_desc'] ?? '',
 					'url'   => $url,
