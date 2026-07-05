@@ -471,6 +471,16 @@ if ( ! function_exists( 'starter_home_render_products' ) ) {
 
 				<?php if ( count( $filter_terms ) > 1 ) : ?>
 					<div class="v5e-controls" role="tablist" aria-label="<?php esc_attr_e( 'Kategorije proizvoda', 'starter-theme' ); ?>">
+						<label class="v5e-category-select-wrap">
+							<span><?php esc_html_e( 'Kategorija', 'starter-theme' ); ?></span>
+							<select class="v5e-category-select" data-home-product-select>
+								<option value="all"><?php esc_html_e( 'Sve', 'starter-theme' ); ?></option>
+								<?php foreach ( $filter_terms as $slug => $name ) : ?>
+									<option value="<?php echo esc_attr( $slug ); ?>"><?php echo esc_html( $name ); ?></option>
+								<?php endforeach; ?>
+							</select>
+						</label>
+
 						<button class="v5e-filter is-active" type="button" data-home-product-filter="all"><?php esc_html_e( 'Sve', 'starter-theme' ); ?></button>
 						<?php foreach ( $filter_terms as $slug => $name ) : ?>
 							<button class="v5e-filter" type="button" data-home-product-filter="<?php echo esc_attr( $slug ); ?>"><?php echo esc_html( $name ); ?></button>
