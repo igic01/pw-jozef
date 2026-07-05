@@ -82,6 +82,7 @@ function starter_home_acf_default_values() {
 		),
 		'form_title'       => 'Postanite vinski saradnik!',
 		'form_desc'        => 'Ukoliko vam se svidja nas koncept i zelite da nasi gosti probaju vasa vina, ostavite nam poruku, a mi cemo vas kontaktirati u kratkom roku.',
+		'form_shortcode'   => '[fluentform id="1"]',
 		'form_desc2'       => 'Slikanje dokazano smanjuje stres, poboljsava emocionalnu regulaciju, samopouzdanje, koncentraciju i paznju.',
 	);
 }
@@ -357,6 +358,14 @@ function starter_register_home_acf_fields() {
 					'media_upload'      => 0,
 					'delay'             => 0,
 					'default_value'     => $defaults['form_desc'],
+				),
+				array(
+					'key'               => 'field_starter_home_form_shortcode',
+					'label'             => __( 'Fluent Forms Shortcode', 'starter-theme' ),
+					'name'              => 'form_shortcode',
+					'type'              => 'text',
+					'instructions'      => __( 'Create the form in Fluent Forms and paste its shortcode here, for example [fluentform id="1"].', 'starter-theme' ),
+					'default_value'     => $defaults['form_shortcode'],
 				),
 				array(
 					'key'               => 'field_starter_home_form_desc2',

@@ -220,7 +220,6 @@ while ( have_posts() ) :
 	$section_3_style  = starter_home_image_url( $section_3_hero, 'full' );
 	$form_bg          = $section_3_style ? sprintf( ' style="%s"', esc_attr( '--home-form-bg: url(' . esc_url_raw( $section_3_style ) . ');' ) ) : '';
 	$section_4_posts  = starter_home_posts();
-	$page_content     = trim( get_the_content() );
 	?>
 
 	<main class="site-main home-template">
@@ -369,9 +368,13 @@ while ( have_posts() ) :
 
 					<?php echo starter_home_text( starter_home_field( 'form_desc' ) ); ?>
 
-					<?php if ( $page_content ) : ?>
+					<?php
+					$form_shortcode = starter_home_field( 'form_shortcode', '[fluentform id="1"]' );
+
+					if ( $form_shortcode && shortcode_exists( 'fluentform' ) ) :
+						?>
 						<div class="home-form__embed">
-							<?php the_content(); ?>
+							<?php echo do_shortcode( $form_shortcode ); ?>
 						</div>
 					<?php endif; ?>
 				</div>
