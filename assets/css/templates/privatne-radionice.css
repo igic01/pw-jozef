@@ -363,17 +363,14 @@
 
 .v4p-form .frm-fluent-form,
 .v4p-form form {
-	display: grid !important;
-	grid-template-columns: repeat(3, minmax(0, 1fr));
-	column-gap: 20px;
-	row-gap: 17px;
+	display: block !important;
 }
 
 .v4p-form .ff-el-group {
-	grid-column: 1 / -1;
+	display: block !important;
 	width: 100% !important;
 	max-width: none !important;
-	margin: 0 !important;
+	margin: 0 0 17px !important;
 	padding: 0 !important;
 }
 
@@ -387,7 +384,15 @@
 .v4p-form .ff-el-group:nth-of-type(6),
 .v4p-form .ff-el-group:nth-of-type(7),
 .v4p-form .ff-el-group:nth-of-type(8) {
-	grid-column: auto;
+	display: inline-block !important;
+	width: calc((100% - 40px) / 3) !important;
+	margin-right: 16px !important;
+	vertical-align: top;
+}
+
+.v4p-form .ff-el-group.v4p-time-period,
+.v4p-form .ff-el-group:nth-of-type(8) {
+	margin-right: 0 !important;
 }
 
 .v4p-form .ff-el-group.v4p-time-hour,
@@ -415,6 +420,14 @@
 .v4p-form .ff-el-group:nth-of-type(7),
 .v4p-form .ff-el-group:nth-of-type(8) {
 	padding-top: 21px !important;
+}
+
+.v4p-form .ff-el-group:nth-of-type(9),
+.v4p-form .ff-el-group:nth-of-type(10),
+.v4p-form .ff_submit_btn_wrapper {
+	clear: both;
+	display: block !important;
+	width: 100% !important;
 }
 
 .v4p-form .ff-el-input--label {
@@ -485,7 +498,6 @@
 }
 
 .v4p-form .ff_submit_btn_wrapper {
-	grid-column: 1 / -1;
 	margin: 3px 0 0 !important;
 }
 
@@ -683,18 +695,15 @@
 		font-size: clamp(2.8rem, 13vw, 4rem);
 	}
 
-	.v4p-form .frm-fluent-form,
-	.v4p-form form {
-		grid-template-columns: 1fr;
-	}
-
 	.v4p-form .ff-el-group.v4p-time-hour,
 	.v4p-form .ff-el-group.v4p-time-minute,
 	.v4p-form .ff-el-group.v4p-time-period,
 	.v4p-form .ff-el-group:nth-of-type(6),
 	.v4p-form .ff-el-group:nth-of-type(7),
 	.v4p-form .ff-el-group:nth-of-type(8) {
-		grid-column: 1 / -1;
+		display: block !important;
+		width: 100% !important;
+		margin-right: 0 !important;
 	}
 
 	.v4p-form .ff-el-group.v4p-time-minute,
