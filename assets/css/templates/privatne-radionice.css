@@ -299,10 +299,10 @@
 
 .v4p-form-layout {
 	display: grid;
-	grid-template-columns: minmax(280px, 0.78fr) minmax(520px, 1.22fr);
-	gap: clamp(44px, 6vw, 92px);
+	grid-template-columns: minmax(320px, 0.86fr) minmax(560px, 1.14fr);
+	gap: clamp(52px, 7vw, 104px);
 	align-items: start;
-	max-width: 1120px;
+	max-width: 1180px;
 	margin: 0 auto;
 }
 
@@ -315,12 +315,13 @@
 }
 
 .v4p-form-copy h2 {
-	max-width: 410px;
+	max-width: 430px;
 	color: var(--color-red);
-	font-size: clamp(3.2rem, 5vw, 5.55rem);
-	line-height: 0.86;
+	font-size: clamp(3.05rem, 4.2vw, 4.65rem);
+	line-height: 0.94;
 	text-align: center;
 	text-transform: uppercase;
+	text-wrap: balance;
 }
 
 .v4p-form-note {
@@ -341,15 +342,24 @@
 }
 
 .v4p-form .fluentform,
-.v4p-form .frm-fluent-form {
+.v4p-form .frm-fluent-form,
+.v4p-form form {
 	width: 100%;
+	max-width: none;
 }
 
-.v4p-form .frm-fluent-form {
+.v4p-form .frm-fluent-form,
+.v4p-form form {
 	display: grid;
 	grid-template-columns: repeat(3, minmax(0, 1fr));
 	column-gap: 22px;
 	row-gap: 18px;
+}
+
+.v4p-form .ff-el-group,
+.v4p-form .ff-el-form-control {
+	width: 100%;
+	max-width: none;
 }
 
 .v4p-form .ff-el-group {
@@ -387,7 +397,7 @@
 .v4p-form .ff-el-input--label label,
 .v4p-form label {
 	color: var(--color-soft-ink);
-	font-size: 0.66rem;
+	font-size: 0.62rem;
 	font-weight: 800;
 	letter-spacing: 0.01em;
 	line-height: 1.1;
@@ -417,6 +427,10 @@
 	box-shadow: none;
 	font-size: 0.86rem;
 	line-height: 1.2;
+}
+
+.v4p-form .ff-el-form-control {
+	width: 100% !important;
 }
 
 .v4p-form select {
@@ -566,7 +580,6 @@
 		grid-template-columns: repeat(2, minmax(0, 1fr));
 	}
 
-	.v4p-form-layout,
 	.v4p-modal-content {
 		grid-template-columns: 1fr;
 	}
@@ -578,6 +591,13 @@
 	.v4p-form-copy h2,
 	.v4p-form-note {
 		max-width: 620px;
+	}
+}
+
+@media (max-width: 900px) {
+	.v4p-form-layout {
+		grid-template-columns: 1fr;
+		gap: 34px;
 	}
 }
 
