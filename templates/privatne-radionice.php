@@ -113,6 +113,18 @@ if ( ! function_exists( 'starter_private_workshops_render_image' ) ) {
 	}
 }
 
+if ( ! function_exists( 'starter_private_workshops_form_title' ) ) {
+	function starter_private_workshops_form_title( $title ) {
+		$plain_title = trim( wp_strip_all_tags( (string) $title ) );
+
+		if ( 'Formular sa osnovnim informacijama za rezervisanje' === $plain_title ) {
+			return '<span>Formular sa</span><span>osnovnim</span><span>informacijama</span><span>za</span><span>rezervisanje</span>';
+		}
+
+		return esc_html( $plain_title );
+	}
+}
+
 if ( ! function_exists( 'starter_private_workshops_fluent_form_shortcode' ) ) {
 	function starter_private_workshops_fluent_form_shortcode() {
 		if ( ! shortcode_exists( 'fluentform' ) ) {
@@ -721,7 +733,7 @@ while ( have_posts() ) :
 				<div class="v4p-form-layout">
 					<div class="v4p-form-copy">
 						<?php if ( $form_title ) : ?>
-							<h2 id="v4p-form-title"><?php echo esc_html( $form_title ); ?></h2>
+							<h2 id="v4p-form-title"><?php echo starter_private_workshops_form_title( $form_title ); ?></h2>
 						<?php endif; ?>
 
 						<?php if ( $form_desc ) : ?>
