@@ -12,8 +12,29 @@ get_header();
 while ( have_posts() ) :
 	the_post();
 
-	$description = has_excerpt() ? get_the_excerpt() : wp_strip_all_tags( get_the_content() );
-	$description = trim( $description );
+	$defaults = function_exists( 'starter_raspored_acf_default_values' ) ? starter_raspored_acf_default_values() : array(
+		'raspored_title' => 'Raspored radionica',
+		'raspored_desc'  => 'Izaberite termin, temu i drustvo, a mi pripremamo platno, boje, vino i atmosferu.',
+	);
+
+	$raspored_title = $defaults['raspored_title'];
+	$raspored_desc  = $defaults['raspored_desc'];
+
+	if ( function_exists( 'get_field' ) ) {
+		$field_title = get_field( 'raspored_title' );
+		$field_desc  = get_field( 'raspored_desc' );
+
+		if ( '' !== $field_title && null !== $field_title && false !== $field_title ) {
+			$raspored_title = $field_title;
+		}
+
+		if ( '' !== $field_desc && null !== $field_desc && false !== $field_desc ) {
+			$raspored_desc = $field_desc;
+		}
+	}
+
+	$raspored_title = trim( wp_strip_all_tags( $raspored_title ) );
+	$raspored_desc  = trim( wp_strip_all_tags( $raspored_desc ) );
 	?>
 
 	<main class="site-main home-template raspored-template">
@@ -21,8 +42,8 @@ while ( have_posts() ) :
 			<?php
 			starter_render_products_schedule(
 				array(
-					'title'    => get_the_title() ?: __( 'Raspored', 'starter-theme' ),
-					'subtitle' => $description ?: __( 'Ne brinite, ne treba vam nikakvo iskustvo.', 'starter-theme' ),
+					'title'    => $raspored_title ?: __( 'Raspored radionica', 'starter-theme' ),
+					'subtitle' => $raspored_desc ?: __( 'Izaberite termin, temu i drustvo, a mi pripremamo platno, boje, vino i atmosferu.', 'starter-theme' ),
 				)
 			);
 			?>

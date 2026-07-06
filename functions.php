@@ -10,6 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 define( 'STARTER_THEME_VERSION', '1.0.0' );
 
 require_once get_template_directory() . '/inc/acf-home.php';
+require_once get_template_directory() . '/inc/acf-raspored.php';
 require_once get_template_directory() . '/inc/woocommerce-product-fields.php';
 
 function starter_theme_setup() {
