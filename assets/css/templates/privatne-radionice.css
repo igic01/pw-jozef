@@ -311,6 +311,9 @@
 	display: grid;
 	gap: 18px;
 	justify-items: center;
+	min-width: 0;
+	overflow-wrap: anywhere;
+	overflow: hidden;
 	text-align: center;
 	padding-top: 6px;
 }
@@ -320,6 +323,7 @@
 	gap: 0;
 	width: 100%;
 	max-width: 520px;
+	overflow-wrap: anywhere;
 	color: var(--color-red);
 	font-size: clamp(3.15rem, 3.9vw, 4.45rem);
 	line-height: 0.86;
@@ -639,8 +643,14 @@
 	}
 
 	.v4p-form-layout {
-		grid-template-columns: minmax(320px, 430px) minmax(480px, 548px);
-		gap: 72px;
+		grid-template-columns: 1fr;
+		gap: 38px;
+	}
+
+	.v4p-form-copy h2,
+	.v4p-form-note,
+	.v4p-form {
+		margin-inline: auto;
 	}
 }
 
@@ -648,12 +658,6 @@
 	.v4p-form-layout {
 		grid-template-columns: 1fr;
 		gap: 34px;
-	}
-
-	.v4p-form-copy h2,
-	.v4p-form-note,
-	.v4p-form {
-		margin-inline: auto;
 	}
 }
 
