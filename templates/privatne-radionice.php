@@ -245,7 +245,7 @@ if ( ! function_exists( 'starter_private_workshops_fluent_form_id' ) ) {
 		}
 
 		update_option( $option_name, $form_id, false );
-		update_option( 'starter_private_workshops_fluent_form_version', 2, false );
+		update_option( 'starter_private_workshops_fluent_form_version', 3, false );
 
 		return $form_id;
 	}
@@ -255,7 +255,7 @@ if ( ! function_exists( 'starter_private_workshops_maybe_update_fluent_form' ) )
 	function starter_private_workshops_maybe_update_fluent_form( $form_id, $forms_table, $form_title ) {
 		global $wpdb;
 
-		if ( absint( get_option( 'starter_private_workshops_fluent_form_version' ) ) >= 2 ) {
+		if ( absint( get_option( 'starter_private_workshops_fluent_form_version' ) ) >= 3 ) {
 			return;
 		}
 
@@ -281,7 +281,7 @@ if ( ! function_exists( 'starter_private_workshops_maybe_update_fluent_form' ) )
 			array( '%d' )
 		);
 
-		update_option( 'starter_private_workshops_fluent_form_version', 2, false );
+		update_option( 'starter_private_workshops_fluent_form_version', 3, false );
 	}
 }
 
@@ -480,12 +480,12 @@ if ( ! function_exists( 'starter_private_workshops_fluent_form_fields' ) ) {
 						'value'       => '',
 						'id'          => '',
 						'class'       => '',
-						'placeholder' => 'Eg. 08',
+						'placeholder' => 'E.g. 08',
 					),
 					'settings'       => array(
 						'container_class'    => 'v4p-time-field v4p-time-hour',
-						'label'              => 'Početak radionice',
-						'admin_field_label'  => 'Početak radionice',
+						'label'              => 'Hours',
+						'admin_field_label'  => 'Hours',
 						'label_placement'    => '',
 						'help_message'       => '',
 						'validation_rules'   => $required,
@@ -506,7 +506,7 @@ if ( ! function_exists( 'starter_private_workshops_fluent_form_fields' ) ) {
 						'value'       => '',
 						'id'          => '',
 						'class'       => '',
-						'placeholder' => 'Eg. 00',
+						'placeholder' => 'E.g. 00',
 					),
 					'settings'       => array(
 						'container_class'    => 'v4p-time-field v4p-time-minute',
@@ -626,7 +626,7 @@ if ( ! function_exists( 'starter_private_workshops_fluent_form_fields' ) ) {
 					'color'            => '#ffffff',
 					'button_ui'        => array(
 						'type'    => 'default',
-						'text'    => 'Pošaljite rezervaciju',
+						'text'    => 'Pošaljite Rezervaciju',
 						'img_url' => '',
 					),
 				),
