@@ -178,21 +178,17 @@ while ( have_posts() ) :
 			)
 		);
 		?>
-		<?php if ( $gallery_images ) : ?>
-			<section class="v4p-frame" aria-labelledby="v4p-gallery-title">
-				<div class="v4p-inner">
-					<h2 class="v4p-heading" id="v4p-gallery-title"><?php esc_html_e( 'Galerija', 'starter-theme' ); ?></h2>
-
-					<div class="v4p-gallery-grid">
-						<?php foreach ( $gallery_images as $index => $image ) : ?>
-							<figure class="v4p-gallery-card">
-								<?php starter_private_workshops_render_image( $image, '', 'large', sprintf( 'Galerija privatne radionice %d', $index + 1 ) ); ?>
-							</figure>
-						<?php endforeach; ?>
-					</div>
-				</div>
-			</section>
-		<?php endif; ?>
+		<?php
+		get_template_part(
+			'template-parts/private-workshops-gallery',
+			null,
+			array(
+				'title'      => __( 'Galerija', 'starter-theme' ),
+				'media'      => $gallery_images,
+				'section_id' => 'v4p-gallery',
+			)
+		);
+		?>
 
 		<section class="v4p-frame" aria-labelledby="v4p-form-title">
 			<div class="v4p-inner">

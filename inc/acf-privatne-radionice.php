@@ -69,7 +69,7 @@ function starter_private_workshops_acf_default_values() {
 }
 
 function starter_private_workshops_acf_default_value( $name, $default = '' ) {
-	if ( 'section_1_posts' === $name ) {
+	if ( 'section_1_posts' === $name || 'images' === $name ) {
 		return array();
 	}
 
@@ -87,7 +87,7 @@ function starter_private_workshops_acf_load_default_value( $value, $post_id, $fi
 		return $value;
 	}
 
-	if ( 'section_1_posts' === $field['name'] ) {
+	if ( 'section_1_posts' === $field['name'] || 'images' === $field['name'] ) {
 		return is_array( $value ) ? $value : array();
 	}
 
@@ -98,6 +98,14 @@ function starter_private_workshops_acf_load_default_value( $value, $post_id, $fi
 	return starter_private_workshops_acf_default_value( $field['name'], $value );
 }
 add_filter( 'acf/load_value', 'starter_private_workshops_acf_load_default_value', 10, 3 );
+
+function starter_private_workshops_acf_gallery_media_query( $args, $field, $post_id ) {
+	$args['post_status']    = 'inherit';
+	$args['post_mime_type'] = array( 'image', 'video' );
+
+	return $args;
+}
+add_filter( 'acf/fields/relationship/query/key=field_starter_private_workshops_images', 'starter_private_workshops_acf_gallery_media_query', 10, 3 );
 
 function starter_register_private_workshops_acf_fields() {
 	if ( ! function_exists( 'acf_add_local_field_group' ) ) {
@@ -198,16 +206,18 @@ function starter_register_private_workshops_acf_fields() {
 				),
 				array(
 					'key'           => 'field_starter_private_workshops_images',
-					'label'         => __( 'Images', 'starter-theme' ),
+					'label'         => __( 'Gallery Media', 'starter-theme' ),
 					'name'          => 'images',
-					'type'          => 'gallery',
-					'return_format' => 'array',
-					'preview_size'  => 'medium',
-					'insert'        => 'append',
-					'library'       => 'all',
+					'type'          => 'relationship',
+					'instructions'  => __( 'Select image and video attachments to display in the gallery. The selected order controls the frontend order.', 'starter-theme' ),
+					'post_type'     => array( 'attachment' ),
+					'post_status'   => array( 'inherit' ),
+					'taxonomy'      => '',
+					'filters'       => array( 'search' ),
+					'elements'      => array( 'featured_image' ),
+					'return_format' => 'object',
 					'min'           => 0,
 					'max'           => 0,
-					'default_value' => $defaults['images'],
 				),
 				array(
 					'key'       => 'field_starter_private_workshops_form_tab',

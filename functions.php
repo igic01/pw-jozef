@@ -33,6 +33,13 @@ function starter_theme_assets() {
 		STARTER_THEME_VERSION
 	);
 
+	wp_enqueue_style(
+		'starter-theme-private-workshops-components',
+		get_template_directory_uri() . '/assets/css/templates/privatne-radionice.css',
+		array( 'starter-theme-style' ),
+		STARTER_THEME_VERSION
+	);
+
 	wp_enqueue_script(
 		'starter-theme-main',
 		get_template_directory_uri() . '/assets/js/main.js',
@@ -56,7 +63,7 @@ function starter_theme_assets() {
 			);
 		}
 
-		if ( file_exists( $template_css ) ) {
+		if ( file_exists( $template_css ) && 'privatne-radionice' !== $template_name ) {
 			wp_enqueue_style(
 				'starter-theme-template-' . $template_name,
 				get_template_directory_uri() . '/assets/css/templates/' . $template_name . '.css',
