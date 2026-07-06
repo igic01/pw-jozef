@@ -141,6 +141,7 @@ if ( ! function_exists( 'starter_private_workshops_fluent_form_id' ) ) {
 		$form_id = absint( get_option( $option_name ) );
 
 		if ( $form_id && starter_private_workshops_fluent_form_exists( $form_id, $forms_table ) ) {
+			starter_private_workshops_maybe_update_fluent_form( $form_id, $forms_table, $form_title );
 			return $form_id;
 		}
 
@@ -153,6 +154,7 @@ if ( ! function_exists( 'starter_private_workshops_fluent_form_id' ) ) {
 
 		if ( $form_id ) {
 			update_option( $option_name, $form_id, false );
+			starter_private_workshops_maybe_update_fluent_form( $form_id, $forms_table, $form_title );
 			return $form_id;
 		}
 
@@ -243,8 +245,43 @@ if ( ! function_exists( 'starter_private_workshops_fluent_form_id' ) ) {
 		}
 
 		update_option( $option_name, $form_id, false );
+		update_option( 'starter_private_workshops_fluent_form_version', 2, false );
 
 		return $form_id;
+	}
+}
+
+if ( ! function_exists( 'starter_private_workshops_maybe_update_fluent_form' ) ) {
+	function starter_private_workshops_maybe_update_fluent_form( $form_id, $forms_table, $form_title ) {
+		global $wpdb;
+
+		if ( absint( get_option( 'starter_private_workshops_fluent_form_version' ) ) >= 2 ) {
+			return;
+		}
+
+		$current_title = $wpdb->get_var(
+			$wpdb->prepare(
+				"SELECT title FROM {$forms_table} WHERE id = %d LIMIT 1",
+				$form_id
+			)
+		);
+
+		if ( $current_title !== $form_title ) {
+			return;
+		}
+
+		$wpdb->update(
+			$forms_table,
+			array(
+				'form_fields' => wp_json_encode( starter_private_workshops_fluent_form_fields() ),
+				'updated_at'  => current_time( 'mysql' ),
+			),
+			array( 'id' => $form_id ),
+			array( '%s', '%s' ),
+			array( '%d' )
+		);
+
+		update_option( 'starter_private_workshops_fluent_form_version', 2, false );
 	}
 }
 
@@ -443,15 +480,15 @@ if ( ! function_exists( 'starter_private_workshops_fluent_form_fields' ) ) {
 						'value'       => '',
 						'id'          => '',
 						'class'       => '',
-						'placeholder' => 'Npr. 18:00',
+						'placeholder' => 'Eg. 08',
 					),
 					'settings'       => array(
-						'container_class'    => '',
+						'container_class'    => 'v4p-time-field v4p-time-hour',
 						'label'              => 'Početak radionice',
 						'admin_field_label'  => 'Početak radionice',
 						'label_placement'    => '',
 						'help_message'       => '',
-						'validation_rules'   => array(),
+						'validation_rules'   => $required,
 						'conditional_logics' => $conditional,
 					),
 					'editor_options' => array(
@@ -463,6 +500,61 @@ if ( ! function_exists( 'starter_private_workshops_fluent_form_fields' ) ) {
 				),
 				array(
 					'index'          => 6,
+					'element'        => 'input_text',
+					'attributes'     => array(
+						'name'        => 'minuta',
+						'value'       => '',
+						'id'          => '',
+						'class'       => '',
+						'placeholder' => 'Eg. 00',
+					),
+					'settings'       => array(
+						'container_class'    => 'v4p-time-field v4p-time-minute',
+						'label'              => 'Minuta',
+						'admin_field_label'  => 'Minuta',
+						'label_placement'    => '',
+						'help_message'       => '',
+						'validation_rules'   => array(),
+						'conditional_logics' => $conditional,
+					),
+					'editor_options' => array(
+						'title'      => 'Input Text',
+						'icon_class' => 'ff-edit-text',
+						'template'   => 'inputText',
+					),
+					'uniqElKey'     => 'starter_private_workshops_minute',
+				),
+				array(
+					'index'          => 7,
+					'element'        => 'select',
+					'attributes'     => array(
+						'name'  => 'am_pm',
+						'value' => '',
+						'class' => '',
+					),
+					'settings'       => array(
+						'container_class'    => 'v4p-time-field v4p-time-period',
+						'label'              => 'AM/PM',
+						'admin_field_label'  => 'AM/PM',
+						'label_placement'    => '',
+						'help_message'       => '',
+						'placeholder'        => 'AM',
+						'advanced_options'   => array(
+							array( 'label' => 'AM', 'value' => 'AM' ),
+							array( 'label' => 'PM', 'value' => 'PM' ),
+						),
+						'validation_rules'   => array(),
+						'conditional_logics' => $conditional,
+					),
+					'editor_options' => array(
+						'title'      => 'Dropdown',
+						'icon_class' => 'ff-edit-dropdown',
+						'template'   => 'select',
+					),
+					'uniqElKey'     => 'starter_private_workshops_period',
+				),
+				array(
+					'index'          => 8,
 					'element'        => 'input_text',
 					'attributes'     => array(
 						'name'        => 'kontakt_osoba',
@@ -488,7 +580,7 @@ if ( ! function_exists( 'starter_private_workshops_fluent_form_fields' ) ) {
 					'uniqElKey'     => 'starter_private_workshops_contact',
 				),
 				array(
-					'index'          => 7,
+					'index'          => 9,
 					'element'        => 'textarea',
 					'attributes'     => array(
 						'name'        => 'dodatna_pitanja',
