@@ -137,10 +137,6 @@ while ( have_posts() ) :
 	$form_title     = starter_private_workshops_field( 'form_title' );
 	$form_desc      = starter_private_workshops_field( 'form_desc' );
 
-	if ( ! is_array( $section_posts ) ) {
-		$section_posts = array();
-	}
-
 	if ( empty( $gallery_images ) ) {
 		$gallery_images = array();
 	} elseif ( ! is_array( $gallery_images ) || isset( $gallery_images['url'] ) || isset( $gallery_images['ID'] ) || isset( $gallery_images['id'] ) ) {
@@ -170,52 +166,18 @@ while ( have_posts() ) :
 			</div>
 		</section>
 
-		<section class="v4p-frame" aria-labelledby="v4p-types-title">
-			<div class="v4p-inner">
-				<?php if ( $section_title ) : ?>
-					<h2 class="v4p-heading" id="v4p-types-title"><?php echo esc_html( $section_title ); ?></h2>
-				<?php endif; ?>
-
-				<?php if ( $section_desc ) : ?>
-					<div class="v4p-intro">
-						<?php echo starter_private_workshops_text( $section_desc ); ?>
-					</div>
-				<?php endif; ?>
-
-				<?php if ( $section_posts ) : ?>
-					<div class="v4p-types-grid">
-						<?php foreach ( $section_posts as $index => $post_card ) : ?>
-							<?php
-							$post_img   = $post_card['img'] ?? '';
-							$post_title = $post_card['title'] ?? '';
-							$post_desc  = $post_card['desc'] ?? '';
-							$post_key   = 'post-' . $index;
-							?>
-							<article class="v4p-card">
-								<?php if ( $post_img ) : ?>
-									<div class="v4p-card-media">
-										<?php starter_private_workshops_render_image( $post_img, '', 'large', $post_title ); ?>
-									</div>
-								<?php endif; ?>
-
-								<div class="v4p-card-body">
-									<?php if ( $post_title ) : ?>
-										<h3><?php echo esc_html( $post_title ); ?></h3>
-									<?php endif; ?>
-
-									<?php if ( $post_desc ) : ?>
-										<p><?php echo esc_html( $post_desc ); ?></p>
-									<?php endif; ?>
-
-									<button class="v4p-button" type="button" data-v4p-open="<?php echo esc_attr( $post_key ); ?>"><?php esc_html_e( 'Saznaj više', 'starter-theme' ); ?></button>
-								</div>
-							</article>
-						<?php endforeach; ?>
-					</div>
-				<?php endif; ?>
-			</div>
-		</section>
-
+		<?php
+		get_template_part(
+			'template-parts/private-workshops-posts',
+			null,
+			array(
+				'title'      => $section_title,
+				'desc'       => $section_desc,
+				'posts'      => $section_posts,
+				'section_id' => 'v4p-types',
+			)
+		);
+		?>
 		<?php if ( $gallery_images ) : ?>
 			<section class="v4p-frame" aria-labelledby="v4p-gallery-title">
 				<div class="v4p-inner">
@@ -257,105 +219,7 @@ while ( have_posts() ) :
 				</div>
 			</div>
 		</section>
-
-		<div class="v4p-hidden-detail">
-			<?php foreach ( $section_posts as $index => $post_card ) : ?>
-				<?php
-				$post_img   = $post_card['img'] ?? '';
-				$post_title = $post_card['title'] ?? '';
-				$post_desc  = $post_card['desc'] ?? '';
-				$post_key   = 'post-' . $index;
-				?>
-				<article data-v4p-detail="<?php echo esc_attr( $post_key ); ?>">
-					<?php if ( $post_img ) : ?>
-						<div class="v4p-modal-media">
-							<?php starter_private_workshops_render_image( $post_img, '', 'large', $post_title ); ?>
-						</div>
-					<?php endif; ?>
-
-					<div class="v4p-modal-body">
-						<?php if ( $post_title ) : ?>
-							<h3><?php echo esc_html( $post_title ); ?></h3>
-						<?php endif; ?>
-
-						<?php if ( $post_desc ) : ?>
-							<?php echo starter_private_workshops_text( $post_desc ); ?>
-						<?php endif; ?>
-					</div>
-				</article>
-			<?php endforeach; ?>
-		</div>
-
-		<div class="v4p-modal" id="v4p-modal" aria-hidden="true">
-			<div class="v4p-modal-backdrop" data-v4p-close></div>
-			<div class="v4p-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="v4p-modal-title">
-				<button class="v4p-modal-close" type="button" aria-label="<?php esc_attr_e( 'Zatvori prozor', 'starter-theme' ); ?>" data-v4p-close>&times;</button>
-				<div class="v4p-modal-content" id="v4p-modal-content"></div>
-			</div>
-		</div>
 	</main>
-
-	<script>
-		(function () {
-			const root = document.querySelector(".private-workshops-template");
-			if (!root) return;
-
-			const modal = root.querySelector("#v4p-modal");
-			const modalContent = root.querySelector("#v4p-modal-content");
-			const openButtons = root.querySelectorAll("[data-v4p-open]");
-			const closeButtons = root.querySelectorAll("[data-v4p-close]");
-			const details = root.querySelector(".v4p-hidden-detail");
-			let lastTrigger = null;
-			let previousBodyOverflow = "";
-			let previousBodyPaddingRight = "";
-
-			function openModal(key, trigger) {
-				const detail = details.querySelector('[data-v4p-detail="' + key + '"]');
-				if (!detail) return;
-
-				const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
-				const bodyPaddingRight = parseFloat(window.getComputedStyle(document.body).paddingRight) || 0;
-
-				modalContent.innerHTML = detail.innerHTML;
-				const title = modalContent.querySelector("h3");
-				if (title) title.id = "v4p-modal-title";
-				previousBodyOverflow = document.body.style.overflow;
-				previousBodyPaddingRight = document.body.style.paddingRight;
-				modal.classList.add("is-open");
-				modal.setAttribute("aria-hidden", "false");
-				document.body.style.overflow = "hidden";
-				if (scrollbarWidth > 0) {
-					document.body.style.paddingRight = bodyPaddingRight + scrollbarWidth + "px";
-				}
-				lastTrigger = trigger || null;
-			}
-
-			function closeModal() {
-				modal.classList.remove("is-open");
-				modal.setAttribute("aria-hidden", "true");
-				modalContent.innerHTML = "";
-				document.body.style.overflow = previousBodyOverflow;
-				document.body.style.paddingRight = previousBodyPaddingRight;
-				if (lastTrigger) lastTrigger.focus();
-			}
-
-			openButtons.forEach(function (button) {
-				button.addEventListener("click", function () {
-					openModal(button.dataset.v4pOpen, button);
-				});
-			});
-
-			closeButtons.forEach(function (button) {
-				button.addEventListener("click", closeModal);
-			});
-
-			document.addEventListener("keydown", function (event) {
-				if (event.key === "Escape" && modal.classList.contains("is-open")) {
-					closeModal();
-				}
-			});
-		})();
-	</script>
 
 	<?php
 endwhile;

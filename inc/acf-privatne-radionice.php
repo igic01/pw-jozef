@@ -69,21 +69,29 @@ function starter_private_workshops_acf_default_values() {
 }
 
 function starter_private_workshops_acf_default_value( $name, $default = '' ) {
+	if ( 'section_1_posts' === $name ) {
+		return array();
+	}
+
 	$defaults = starter_private_workshops_acf_default_values();
 
 	return array_key_exists( $name, $defaults ) ? $defaults[ $name ] : $default;
 }
 
 function starter_private_workshops_acf_load_default_value( $value, $post_id, $field ) {
-	if ( null !== $value && false !== $value && '' !== $value && array() !== $value ) {
-		return $value;
-	}
-
 	if ( empty( $field['key'] ) || 0 !== strpos( $field['key'], 'field_starter_private_workshops_' ) ) {
 		return $value;
 	}
 
 	if ( empty( $field['name'] ) ) {
+		return $value;
+	}
+
+	if ( 'section_1_posts' === $field['name'] ) {
+		return is_array( $value ) ? $value : array();
+	}
+
+	if ( null !== $value && false !== $value && '' !== $value && array() !== $value ) {
 		return $value;
 	}
 
@@ -170,39 +178,15 @@ function starter_register_private_workshops_acf_fields() {
 					'key'           => 'field_starter_private_workshops_section_1_posts',
 					'label'         => __( 'Section 1 Posts', 'starter-theme' ),
 					'name'          => 'section_1_posts',
-					'type'          => 'repeater',
-					'layout'        => 'block',
-					'button_label'  => __( 'Add Post Card', 'starter-theme' ),
-					'collapsed'     => 'field_starter_private_workshops_section_1_post_title',
-					'default_value' => $defaults['section_1_posts'],
-					'sub_fields'    => array(
-						array(
-							'key'           => 'field_starter_private_workshops_section_1_post_img',
-							'label'         => __( 'Img', 'starter-theme' ),
-							'name'          => 'img',
-							'type'          => 'image',
-							'return_format' => 'array',
-							'preview_size'  => 'thumbnail',
-							'library'       => 'all',
-							'default_value' => $image,
-						),
-						array(
-							'key'           => 'field_starter_private_workshops_section_1_post_title',
-							'label'         => __( 'Title', 'starter-theme' ),
-							'name'          => 'title',
-							'type'          => 'text',
-							'default_value' => 'Klasična P&W',
-						),
-						array(
-							'key'           => 'field_starter_private_workshops_section_1_post_desc',
-							'label'         => __( 'Desc', 'starter-theme' ),
-							'name'          => 'desc',
-							'type'          => 'textarea',
-							'rows'          => 4,
-							'new_lines'     => '',
-							'default_value' => 'Korak po korak do savršene slike uz vino, opuštenu atmosferu i vođenje instruktorke.',
-						),
-					),
+					'type'          => 'relationship',
+					'instructions'  => __( 'Select the posts to display in this section. The selected order controls the frontend order.', 'starter-theme' ),
+					'post_type'     => array( 'post' ),
+					'taxonomy'      => '',
+					'filters'       => array( 'search', 'post_type', 'taxonomy' ),
+					'elements'      => array( 'featured_image' ),
+					'return_format' => 'object',
+					'min'           => 0,
+					'max'           => 0,
 				),
 				array(
 					'key'       => 'field_starter_private_workshops_gallery_tab',
