@@ -65,6 +65,7 @@ function starter_private_workshops_acf_default_values() {
 		'images'          => array_fill( 0, 8, $image ),
 		'form_title'      => 'Formular sa osnovnim informacijama za rezervisanje',
 		'form_desc'       => 'Pošaljite nam osnovne informacije o događaju i javićemo vam se sa prijedlogom termina, ponudom i svim narednim koracima.',
+		'form_shortcode'  => '',
 	);
 }
 
@@ -244,6 +245,14 @@ function starter_register_private_workshops_acf_fields() {
 					'media_upload'  => 0,
 					'delay'         => 0,
 					'default_value' => $defaults['form_desc'],
+				),
+				array(
+					'key'           => 'field_starter_private_workshops_form_shortcode',
+					'label'         => __( 'Fluent Forms Shortcode', 'starter-theme' ),
+					'name'          => 'form_shortcode',
+					'type'          => 'text',
+					'instructions'  => __( 'Leave empty to use the private workshop reservation Fluent Form, or paste another shortcode like [fluentform id="1"].', 'starter-theme' ),
+					'default_value' => $defaults['form_shortcode'],
 				),
 			),
 			'location'              => array(

@@ -327,6 +327,24 @@
 	min-width: 0;
 }
 
+.v4p-form .fluentform,
+.v4p-form .frm-fluent-form {
+	width: 100%;
+}
+
+.v4p-form .ff-el-group {
+	margin-bottom: 12px;
+}
+
+.v4p-form .ff-el-input--label label,
+.v4p-form label {
+	color: var(--color-red);
+	font-size: 0.72rem;
+	font-weight: 800;
+	letter-spacing: 0.02em;
+	text-transform: uppercase;
+}
+
 .v4p-form input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]),
 .v4p-form select,
 .v4p-form textarea {
@@ -343,6 +361,22 @@
 .v4p-form textarea {
 	min-height: 132px;
 	resize: vertical;
+}
+
+.v4p-form .ff-el-is-error input,
+.v4p-form .ff-el-is-error select,
+.v4p-form .ff-el-is-error textarea {
+	border-color: var(--color-red);
+}
+
+.v4p-form .error,
+.v4p-form .ff-el-is-error .text-danger {
+	color: var(--color-red);
+	font-size: 0.78rem;
+}
+
+.v4p-form .ff-btn-submit {
+	margin-top: 4px;
 }
 
 .v4p-hidden-detail {
