@@ -299,7 +299,7 @@
 
 .v4p-form-layout {
 	display: grid;
-	grid-template-columns: minmax(420px, 520px) 548px;
+	grid-template-columns: minmax(520px, 660px) 548px;
 	gap: clamp(96px, 8vw, 140px);
 	align-items: start;
 	justify-content: center;
@@ -312,7 +312,6 @@
 	gap: 18px;
 	justify-items: center;
 	min-width: 0;
-	overflow-wrap: anywhere;
 	overflow: hidden;
 	text-align: center;
 	padding-top: 6px;
@@ -322,8 +321,7 @@
 	display: grid;
 	gap: 0;
 	width: 100%;
-	max-width: 520px;
-	overflow-wrap: anywhere;
+	max-width: 660px;
 	color: var(--color-red);
 	font-size: clamp(3.15rem, 3.9vw, 4.45rem);
 	line-height: 0.86;
@@ -628,7 +626,7 @@
 	background: transparent;
 }
 
-@media (max-width: 1100px) {
+@media (max-width: 1280px) {
 	.v4p-types-grid,
 	.v4p-gallery-grid {
 		grid-template-columns: repeat(2, minmax(0, 1fr));
