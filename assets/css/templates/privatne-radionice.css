@@ -299,7 +299,7 @@
 
 .v4p-form-layout {
 	display: grid;
-	grid-template-columns: minmax(520px, 660px) 548px;
+	grid-template-columns: max-content minmax(360px, 548px);
 	gap: clamp(96px, 8vw, 140px);
 	align-items: start;
 	justify-content: center;
@@ -311,6 +311,7 @@
 	display: grid;
 	gap: 18px;
 	justify-items: center;
+	width: max-content;
 	min-width: 0;
 	overflow: hidden;
 	text-align: center;
@@ -320,8 +321,8 @@
 .v4p-form-copy h2 {
 	display: grid;
 	gap: 0;
-	width: 100%;
-	max-width: 660px;
+	width: max-content;
+	max-width: none;
 	color: var(--color-red);
 	font-size: clamp(3.15rem, 3.9vw, 4.45rem);
 	line-height: 0.86;
@@ -350,7 +351,7 @@
 }
 
 .v4p-form {
-	width: 548px;
+	width: 100%;
 	max-width: 100%;
 	min-width: 0;
 	padding-top: 2px;
@@ -649,6 +650,12 @@
 	.v4p-form-note,
 	.v4p-form {
 		margin-inline: auto;
+	}
+
+	.v4p-form-copy,
+	.v4p-form-copy h2 {
+		width: fit-content;
+		max-width: 100%;
 	}
 }
 
