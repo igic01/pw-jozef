@@ -7,58 +7,112 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-$image_url = content_url( '/uploads/2026/06/placeholder-1.webp' );
+if ( ! function_exists( 'starter_private_workshops_field' ) ) {
+	function starter_private_workshops_field( $name, $default = '' ) {
+		if ( function_exists( 'get_field' ) ) {
+			$value = get_field( $name );
 
-$workshops = array(
-	array(
-		'key'        => 'classic',
-		'title'      => 'Klasična P&W',
-		'alt'        => 'Klasična Paint and Wine radionica',
-		'summary'    => 'Korak po korak do savršene slike uz vino, opuštenu atmosferu i vođenje instruktorke.',
-		'modalTitle' => 'Klasična Paint and Wine Radionica',
-		'copy'       => array(
-			'Kod nas u ateljeu, ili na lokaciji koju vi odaberete, zakažite radionicu na kojoj će se svi učesnici zajedno opustiti, smijati i kvalitetno provesti vrijeme. Učesnici će slikati unaprijed odabranu temu, korak po korak sa instruktorkom, dok uživaju u vrhunskim vinima i druženju.',
-			'Emocije učesnika na kraju radionice su neprocjenjive, a najbolje od svega je što rad ostaje kao suvenir.',
-			'<strong>Preporuka za:</strong> kolektive, veće turističke grupe, MICE grupe i događaje na kojima želite uspomenu koja ostaje.',
-		),
-	),
-	array(
-		'key'        => 'neon',
-		'title'      => 'Neon P&C',
-		'alt'        => 'Neon Paint and Cocktails radionica',
-		'summary'    => 'Večernji format sa UV bojama, koktel atmosferom i dinamičnim vizuelnim efektom.',
-		'modalTitle' => 'Neon Paint & Cocktails',
-		'copy'       => array(
-			'Ovaj format donosi intenzivnije boje, UV svjetlo i energiju večernjeg izlaska, ali i dalje zadržava jednostavan korak-po-korak pristup zbog kojeg svi mogu da učestvuju.',
-			'Idealan je kada želite malo jaču atmosferu, zabavniji ritam i vizuelno upečatljiv sadržaj za privatni event ili poseban izlazak.',
-			'<strong>Preporuka za:</strong> djevojačke večeri, večernje evente, mlađe grupe i brend aktivacije.',
-		),
-	),
-	array(
-		'key'        => 'kids',
-		'title'      => 'Paint & Kids',
-		'alt'        => 'Paint and Kids radionica',
-		'summary'    => 'Kreativan format za rođendane, porodična okupljanja i razigrane privatne proslave.',
-		'modalTitle' => 'Paint & Kids',
-		'copy'       => array(
-			'Lagani i razigrani format u kojem je fokus na druženju, kreativnosti i iskustvu koje je prilagođeno mlađim učesnicima i porodičnim grupama.',
-			'Tempo radionice, izbor motiva i trajanje mogu se prilagoditi uzrastu i tipu proslave kako bi događaj ostao opušten i jednostavan za organizaciju.',
-			'<strong>Preporuka za:</strong> rođendane, porodične proslave i privatna okupljanja sa djecom.',
-		),
-	),
-	array(
-		'key'        => 'custom',
-		'title'      => 'Radionica Po Mjeri',
-		'alt'        => 'Radionica po mjeri',
-		'summary'    => 'Temu, trajanje i atmosferu prilagođavamo vašem timu, gostima i lokaciji događaja.',
-		'modalTitle' => 'Radionica Po Mjeri',
-		'copy'       => array(
-			'Kada imate specifičan koncept, temu, broj gostiju ili lokaciju, osmišljavamo privatnu radionicu koja odgovara baš tom događaju.',
-			'Zajedno definišemo format, trajanje, vrstu pića, nivo vođenja i sve detalje kako bi sadržaj bio usklađen sa vašim gostima i ciljem događaja.',
-			'<strong>Preporuka za:</strong> kompanije, turističke grupe, hotele, agencije i posebne privatne proslave.',
-		),
-	),
-);
+			if ( null !== $value && false !== $value && '' !== $value && array() !== $value ) {
+				return $value;
+			}
+		}
+
+		if ( function_exists( 'starter_private_workshops_acf_default_value' ) ) {
+			return starter_private_workshops_acf_default_value( $name, $default );
+		}
+
+		return $default;
+	}
+}
+
+if ( ! function_exists( 'starter_private_workshops_text' ) ) {
+	function starter_private_workshops_text( $value ) {
+		if ( '' === $value || null === $value ) {
+			return '';
+		}
+
+		return wpautop( wp_kses_post( $value ) );
+	}
+}
+
+if ( ! function_exists( 'starter_private_workshops_image_url' ) ) {
+	function starter_private_workshops_image_url( $image, $size = 'large' ) {
+		if ( empty( $image ) ) {
+			return '';
+		}
+
+		if ( is_numeric( $image ) ) {
+			$src = wp_get_attachment_image_src( (int) $image, $size );
+			return $src ? $src[0] : '';
+		}
+
+		if ( is_array( $image ) ) {
+			if ( ! empty( $image['sizes'][ $size ] ) ) {
+				return $image['sizes'][ $size ];
+			}
+
+			if ( ! empty( $image['url'] ) ) {
+				return $image['url'];
+			}
+
+			if ( ! empty( $image['ID'] ) || ! empty( $image['id'] ) ) {
+				return starter_private_workshops_image_url( ! empty( $image['ID'] ) ? $image['ID'] : $image['id'], $size );
+			}
+		}
+
+		return is_string( $image ) ? $image : '';
+	}
+}
+
+if ( ! function_exists( 'starter_private_workshops_image_alt' ) ) {
+	function starter_private_workshops_image_alt( $image, $fallback = '' ) {
+		if ( is_array( $image ) && ! empty( $image['alt'] ) ) {
+			return $image['alt'];
+		}
+
+		if ( is_numeric( $image ) ) {
+			$alt = get_post_meta( (int) $image, '_wp_attachment_image_alt', true );
+			return $alt ? $alt : $fallback;
+		}
+
+		return $fallback;
+	}
+}
+
+if ( ! function_exists( 'starter_private_workshops_render_image' ) ) {
+	function starter_private_workshops_render_image( $image, $class = '', $size = 'large', $fallback_alt = '' ) {
+		if ( empty( $image ) ) {
+			return;
+		}
+
+		if ( is_numeric( $image ) ) {
+			echo wp_get_attachment_image(
+				(int) $image,
+				$size,
+				false,
+				array(
+					'class'   => $class,
+					'loading' => 'lazy',
+				)
+			);
+			return;
+		}
+
+		$url = starter_private_workshops_image_url( $image, $size );
+
+		if ( ! $url ) {
+			return;
+		}
+
+		printf(
+			'<img class="%1$s" src="%2$s" alt="%3$s" loading="lazy">',
+			esc_attr( $class ),
+			esc_url( $url ),
+			esc_attr( starter_private_workshops_image_alt( $image, $fallback_alt ) )
+		);
+	}
+}
+
 ?><!doctype html>
 <html <?php language_attributes(); ?>>
 <head>
@@ -72,79 +126,125 @@ $workshops = array(
 <?php
 while ( have_posts() ) :
 	the_post();
+
+	$hero_title     = starter_private_workshops_field( 'hero_title', get_the_title() );
+	$hero_desc      = starter_private_workshops_field( 'hero_desc' );
+	$hero_img       = starter_private_workshops_field( 'hero_img' );
+	$section_title  = starter_private_workshops_field( 'section_1_title' );
+	$section_desc   = starter_private_workshops_field( 'section_1_desc' );
+	$section_posts  = starter_private_workshops_field( 'section_1_posts', array() );
+	$gallery_images = starter_private_workshops_field( 'images', array() );
+	$form_title     = starter_private_workshops_field( 'form_title' );
+	$form_desc      = starter_private_workshops_field( 'form_desc' );
+
+	if ( ! is_array( $section_posts ) ) {
+		$section_posts = array();
+	}
+
+	if ( empty( $gallery_images ) ) {
+		$gallery_images = array();
+	} elseif ( ! is_array( $gallery_images ) || isset( $gallery_images['url'] ) || isset( $gallery_images['ID'] ) || isset( $gallery_images['id'] ) ) {
+		$gallery_images = array( $gallery_images );
+	}
 	?>
 
 	<main class="site-main v4p-page private-workshops-template">
 		<section class="v4p-hero" aria-label="<?php esc_attr_e( 'Privatne radionice hero', 'starter-theme' ); ?>">
-			<div class="v4p-hero-media">
-				<img src="<?php echo esc_url( $image_url ); ?>" alt="<?php esc_attr_e( 'Privatna Paint and Wine radionica', 'starter-theme' ); ?>">
-			</div>
+			<?php if ( $hero_img ) : ?>
+				<div class="v4p-hero-media">
+					<?php starter_private_workshops_render_image( $hero_img, '', 'full', __( 'Privatna Paint and Wine radionica', 'starter-theme' ) ); ?>
+				</div>
+			<?php endif; ?>
 
 			<div class="v4p-hero-content">
 				<div class="v4p-hero-shell">
 					<p class="v4p-eyebrow"><?php esc_html_e( 'Privatne Radionice', 'starter-theme' ); ?></p>
-					<h1 class="v4p-title">Zakažite <span class="v4p-accent">Privatnu</span> Radionicu!</h1>
-					<p class="v4p-lead">
-						Bilo da ste HR u firmi kojem treba nova zanimacija za zaposlene, kuma koja organizuje
-						djevojačko veče, turistička organizacija koja želi da impresionira goste, ili slično,
-						mi smo tu za vas!
-					</p>
-					<p class="v4p-lead">
-						Radionicu možete zakazati u našem ateljeu, ali i bilo gdje u Crnoj Gori, mi dolazimo
-						na lokaciju.
-					</p>
+					<h1 class="v4p-title"><?php echo wp_kses_post( $hero_title ); ?></h1>
+
+					<?php if ( $hero_desc ) : ?>
+						<div class="v4p-lead">
+							<?php echo starter_private_workshops_text( $hero_desc ); ?>
+						</div>
+					<?php endif; ?>
 				</div>
 			</div>
 		</section>
 
 		<section class="v4p-frame" aria-labelledby="v4p-types-title">
 			<div class="v4p-inner">
-				<h2 class="v4p-heading" id="v4p-types-title"><?php esc_html_e( 'Vrste Radionica', 'starter-theme' ); ?></h2>
-				<p class="v4p-intro">
-					Birajte format koji najbolje odgovara vašem događaju. Svaka radionica može da se organizuje
-					u našem ateljeu ili na lokaciji koju vi odaberete.
-				</p>
+				<?php if ( $section_title ) : ?>
+					<h2 class="v4p-heading" id="v4p-types-title"><?php echo esc_html( $section_title ); ?></h2>
+				<?php endif; ?>
 
-				<div class="v4p-types-grid">
-					<?php foreach ( $workshops as $workshop ) : ?>
-						<article class="v4p-card">
-							<div class="v4p-card-media">
-								<img src="<?php echo esc_url( $image_url ); ?>" alt="<?php echo esc_attr( $workshop['alt'] ); ?>" loading="lazy">
-							</div>
-							<div class="v4p-card-body">
-								<h3><?php echo esc_html( $workshop['title'] ); ?></h3>
-								<p><?php echo esc_html( $workshop['summary'] ); ?></p>
-								<button class="v4p-button" type="button" data-v4p-open="<?php echo esc_attr( $workshop['key'] ); ?>"><?php esc_html_e( 'Saznaj više', 'starter-theme' ); ?></button>
-							</div>
-						</article>
-					<?php endforeach; ?>
-				</div>
+				<?php if ( $section_desc ) : ?>
+					<div class="v4p-intro">
+						<?php echo starter_private_workshops_text( $section_desc ); ?>
+					</div>
+				<?php endif; ?>
+
+				<?php if ( $section_posts ) : ?>
+					<div class="v4p-types-grid">
+						<?php foreach ( $section_posts as $index => $post_card ) : ?>
+							<?php
+							$post_img   = $post_card['img'] ?? '';
+							$post_title = $post_card['title'] ?? '';
+							$post_desc  = $post_card['desc'] ?? '';
+							$post_key   = 'post-' . $index;
+							?>
+							<article class="v4p-card">
+								<?php if ( $post_img ) : ?>
+									<div class="v4p-card-media">
+										<?php starter_private_workshops_render_image( $post_img, '', 'large', $post_title ); ?>
+									</div>
+								<?php endif; ?>
+
+								<div class="v4p-card-body">
+									<?php if ( $post_title ) : ?>
+										<h3><?php echo esc_html( $post_title ); ?></h3>
+									<?php endif; ?>
+
+									<?php if ( $post_desc ) : ?>
+										<p><?php echo esc_html( $post_desc ); ?></p>
+									<?php endif; ?>
+
+									<button class="v4p-button" type="button" data-v4p-open="<?php echo esc_attr( $post_key ); ?>"><?php esc_html_e( 'Saznaj više', 'starter-theme' ); ?></button>
+								</div>
+							</article>
+						<?php endforeach; ?>
+					</div>
+				<?php endif; ?>
 			</div>
 		</section>
 
-		<section class="v4p-frame" aria-labelledby="v4p-gallery-title">
-			<div class="v4p-inner">
-				<h2 class="v4p-heading" id="v4p-gallery-title"><?php esc_html_e( 'Galerija', 'starter-theme' ); ?></h2>
+		<?php if ( $gallery_images ) : ?>
+			<section class="v4p-frame" aria-labelledby="v4p-gallery-title">
+				<div class="v4p-inner">
+					<h2 class="v4p-heading" id="v4p-gallery-title"><?php esc_html_e( 'Galerija', 'starter-theme' ); ?></h2>
 
-				<div class="v4p-gallery-grid">
-					<?php for ( $index = 1; $index <= 8; $index++ ) : ?>
-						<figure class="v4p-gallery-card">
-							<img src="<?php echo esc_url( $image_url ); ?>" alt="<?php echo esc_attr( sprintf( 'Galerija privatne radionice %d', $index ) ); ?>" loading="lazy">
-						</figure>
-					<?php endfor; ?>
+					<div class="v4p-gallery-grid">
+						<?php foreach ( $gallery_images as $index => $image ) : ?>
+							<figure class="v4p-gallery-card">
+								<?php starter_private_workshops_render_image( $image, '', 'large', sprintf( 'Galerija privatne radionice %d', $index + 1 ) ); ?>
+							</figure>
+						<?php endforeach; ?>
+					</div>
 				</div>
-			</div>
-		</section>
+			</section>
+		<?php endif; ?>
 
 		<section class="v4p-frame" aria-labelledby="v4p-form-title">
 			<div class="v4p-inner">
 				<div class="v4p-form-layout">
 					<div class="v4p-form-copy">
-						<h2 id="v4p-form-title"><?php esc_html_e( 'Formular sa osnovnim informacijama za rezervisanje', 'starter-theme' ); ?></h2>
-						<p class="v4p-form-note">
-							Pošaljite nam osnovne informacije o događaju i javićemo vam se sa prijedlogom
-							termina, ponudom i svim narednim koracima.
-						</p>
+						<?php if ( $form_title ) : ?>
+							<h2 id="v4p-form-title"><?php echo esc_html( $form_title ); ?></h2>
+						<?php endif; ?>
+
+						<?php if ( $form_desc ) : ?>
+							<div class="v4p-form-note">
+								<?php echo starter_private_workshops_text( $form_desc ); ?>
+							</div>
+						<?php endif; ?>
 					</div>
 
 					<div class="v4p-form">
@@ -159,16 +259,28 @@ while ( have_posts() ) :
 		</section>
 
 		<div class="v4p-hidden-detail">
-			<?php foreach ( $workshops as $workshop ) : ?>
-				<article data-v4p-detail="<?php echo esc_attr( $workshop['key'] ); ?>">
-					<div class="v4p-modal-media">
-						<img src="<?php echo esc_url( $image_url ); ?>" alt="<?php echo esc_attr( $workshop['alt'] ); ?>" loading="lazy">
-					</div>
+			<?php foreach ( $section_posts as $index => $post_card ) : ?>
+				<?php
+				$post_img   = $post_card['img'] ?? '';
+				$post_title = $post_card['title'] ?? '';
+				$post_desc  = $post_card['desc'] ?? '';
+				$post_key   = 'post-' . $index;
+				?>
+				<article data-v4p-detail="<?php echo esc_attr( $post_key ); ?>">
+					<?php if ( $post_img ) : ?>
+						<div class="v4p-modal-media">
+							<?php starter_private_workshops_render_image( $post_img, '', 'large', $post_title ); ?>
+						</div>
+					<?php endif; ?>
+
 					<div class="v4p-modal-body">
-						<h3><?php echo esc_html( $workshop['modalTitle'] ); ?></h3>
-						<?php foreach ( $workshop['copy'] as $paragraph ) : ?>
-							<p><?php echo wp_kses_post( $paragraph ); ?></p>
-						<?php endforeach; ?>
+						<?php if ( $post_title ) : ?>
+							<h3><?php echo esc_html( $post_title ); ?></h3>
+						<?php endif; ?>
+
+						<?php if ( $post_desc ) : ?>
+							<?php echo starter_private_workshops_text( $post_desc ); ?>
+						<?php endif; ?>
 					</div>
 				</article>
 			<?php endforeach; ?>

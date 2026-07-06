@@ -117,7 +117,6 @@
 }
 
 .v4p-lead {
-	max-width: 40ch;
 	margin-inline: auto;
 	color: rgba(255, 255, 255, 0.82);
 	font-size: clamp(1rem, 1.45vw, 1.08rem);

@@ -98,6 +98,10 @@ function starter_home_acf_load_default_value( $value, $post_id, $field ) {
 		return $value;
 	}
 
+	if ( empty( $field['key'] ) || 0 !== strpos( $field['key'], 'field_starter_home_' ) ) {
+		return $value;
+	}
+
 	if ( empty( $field['name'] ) ) {
 		return $value;
 	}
