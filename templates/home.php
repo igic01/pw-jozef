@@ -433,84 +433,11 @@ if ( ! function_exists( 'starter_home_fluent_form_exists' ) ) {
 
 if ( ! function_exists( 'starter_home_render_products' ) ) {
 	function starter_home_render_products() {
-		if ( ! function_exists( 'starter_get_upcoming_products' ) ) {
+		if ( ! function_exists( 'starter_render_products_schedule' ) ) {
 			return;
 		}
 
-		$products = starter_get_upcoming_products(
-			array(
-				'exclude_category' => 'pw-shop',
-			)
-		);
-
-		if ( empty( $products ) ) {
-			echo '<p class="home-products__empty">' . esc_html__( 'Trenutno nema proizvoda za prikaz.', 'starter-theme' ) . '</p>';
-			return;
-		}
-
-		$filter_terms = array();
-
-		foreach ( $products as $product ) {
-			foreach ( $product['categories'] as $category ) {
-				if ( empty( $category['slug'] ) || empty( $category['name'] ) ) {
-					continue;
-				}
-
-				$filter_terms[ $category['slug'] ] = $category['name'];
-			}
-		}
-
-		asort( $filter_terms, SORT_NATURAL | SORT_FLAG_CASE );
-		?>
-		<div class="v5e-schedule" data-home-products data-home-default-filter="all">
-			<div class="v5e-shell">
-				<div class="v5e-head">
-					<h2 class="v5e-title"><?php esc_html_e( 'Mjesečni Raspored', 'starter-theme' ); ?></h2>
-					<p class="v5e-subtitle"><?php esc_html_e( 'Ne brinite, ne treba vam nikakvo iskustvo.', 'starter-theme' ); ?></p>
-				</div>
-
-				<?php if ( count( $filter_terms ) > 1 ) : ?>
-					<div class="v5e-controls" role="tablist" aria-label="<?php esc_attr_e( 'Kategorije proizvoda', 'starter-theme' ); ?>">
-						<button class="v5e-filter is-active" type="button" data-home-product-filter="all"><?php esc_html_e( 'Sve', 'starter-theme' ); ?></button>
-						<?php foreach ( $filter_terms as $slug => $name ) : ?>
-							<button class="v5e-filter" type="button" data-home-product-filter="<?php echo esc_attr( $slug ); ?>"><?php echo esc_html( $name ); ?></button>
-						<?php endforeach; ?>
-					</div>
-				<?php endif; ?>
-
-				<div class="v5e-grid">
-					<?php foreach ( $products as $product ) : ?>
-						<article class="v5e-card" data-home-product-categories="<?php echo esc_attr( implode( ',', $product['category_slugs'] ) ); ?>">
-							<?php if ( $product['display_date'] ) : ?>
-								<div class="v5e-date"><?php echo esc_html( $product['display_date'] ); ?></div>
-							<?php endif; ?>
-
-							<?php if ( $product['category'] ) : ?>
-								<div class="v5e-meta"><?php echo esc_html( $product['category'] ); ?></div>
-							<?php endif; ?>
-
-							<a class="v5e-image" href="<?php echo esc_url( $product['link'] ); ?>" aria-label="<?php echo esc_attr( $product['name'] ); ?>">
-								<?php echo wp_kses_post( $product['image_html'] ); ?>
-							</a>
-
-							<h3 class="v5e-name"><?php echo esc_html( $product['name'] ); ?></h3>
-
-							<div class="v5e-priceRow">
-								<div class="v5e-price"><?php echo wp_kses_post( $product['price_html'] ); ?></div>
-								<?php if ( $product['difficulty_label'] ) : ?>
-									<div class="v5e-accent"><?php echo esc_html( $product['difficulty_label'] ); ?></div>
-								<?php endif; ?>
-							</div>
-
-							<div class="v5e-buy">
-								<a class="v5e-button" href="<?php echo esc_url( $product['link'] ); ?>"><?php esc_html_e( 'Rezerviši', 'starter-theme' ); ?></a>
-							</div>
-						</article>
-					<?php endforeach; ?>
-				</div>
-			</div>
-		</div>
-		<?php
+		starter_render_products_schedule();
 	}
 }
 

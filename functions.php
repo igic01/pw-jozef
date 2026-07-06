@@ -45,6 +45,15 @@ function starter_theme_assets() {
 		$template_name = basename( $template_slug, '.php' );
 		$template_css  = get_template_directory() . '/assets/css/templates/' . $template_name . '.css';
 
+		if ( 'raspored' === $template_name ) {
+			wp_enqueue_style(
+				'starter-theme-template-home',
+				get_template_directory_uri() . '/assets/css/templates/home.css',
+				array( 'starter-theme-style' ),
+				STARTER_THEME_VERSION
+			);
+		}
+
 		if ( file_exists( $template_css ) ) {
 			wp_enqueue_style(
 				'starter-theme-template-' . $template_name,
@@ -226,5 +235,97 @@ if ( ! function_exists( 'starter_format_product_difficulty' ) ) {
 		}
 
 		return str_repeat( '/', min( 5, $difficulty ) );
+	}
+}
+
+if ( ! function_exists( 'starter_render_products_schedule' ) ) {
+	function starter_render_products_schedule( $args = array() ) {
+		$args = wp_parse_args(
+			$args,
+			array(
+				'title'            => __( 'Mjesečni Raspored', 'starter-theme' ),
+				'subtitle'         => __( 'Ne brinite, ne treba vam nikakvo iskustvo.', 'starter-theme' ),
+				'exclude_category' => 'pw-shop',
+				'empty_message'    => __( 'Trenutno nema proizvoda za prikaz.', 'starter-theme' ),
+				'button_label'     => __( 'Rezerviši', 'starter-theme' ),
+			)
+		);
+
+		$products = starter_get_upcoming_products(
+			array(
+				'exclude_category' => $args['exclude_category'],
+			)
+		);
+
+		if ( empty( $products ) ) {
+			echo '<p class="home-products__empty">' . esc_html( $args['empty_message'] ) . '</p>';
+			return;
+		}
+
+		$filter_terms = array();
+
+		foreach ( $products as $product ) {
+			foreach ( $product['categories'] as $category ) {
+				if ( empty( $category['slug'] ) || empty( $category['name'] ) ) {
+					continue;
+				}
+
+				$filter_terms[ $category['slug'] ] = $category['name'];
+			}
+		}
+
+		asort( $filter_terms, SORT_NATURAL | SORT_FLAG_CASE );
+		?>
+		<div class="v5e-schedule" data-home-products data-home-default-filter="all">
+			<div class="v5e-shell">
+				<div class="v5e-head">
+					<h2 class="v5e-title"><?php echo esc_html( $args['title'] ); ?></h2>
+					<?php if ( $args['subtitle'] ) : ?>
+						<p class="v5e-subtitle"><?php echo esc_html( $args['subtitle'] ); ?></p>
+					<?php endif; ?>
+				</div>
+
+				<?php if ( count( $filter_terms ) > 1 ) : ?>
+					<div class="v5e-controls" role="tablist" aria-label="<?php esc_attr_e( 'Kategorije proizvoda', 'starter-theme' ); ?>">
+						<button class="v5e-filter is-active" type="button" data-home-product-filter="all"><?php esc_html_e( 'Sve', 'starter-theme' ); ?></button>
+						<?php foreach ( $filter_terms as $slug => $name ) : ?>
+							<button class="v5e-filter" type="button" data-home-product-filter="<?php echo esc_attr( $slug ); ?>"><?php echo esc_html( $name ); ?></button>
+						<?php endforeach; ?>
+					</div>
+				<?php endif; ?>
+
+				<div class="v5e-grid">
+					<?php foreach ( $products as $product ) : ?>
+						<article class="v5e-card" data-home-product-categories="<?php echo esc_attr( implode( ',', $product['category_slugs'] ) ); ?>">
+							<?php if ( $product['display_date'] ) : ?>
+								<div class="v5e-date"><?php echo esc_html( $product['display_date'] ); ?></div>
+							<?php endif; ?>
+
+							<?php if ( $product['category'] ) : ?>
+								<div class="v5e-meta"><?php echo esc_html( $product['category'] ); ?></div>
+							<?php endif; ?>
+
+							<a class="v5e-image" href="<?php echo esc_url( $product['link'] ); ?>" aria-label="<?php echo esc_attr( $product['name'] ); ?>">
+								<?php echo wp_kses_post( $product['image_html'] ); ?>
+							</a>
+
+							<h3 class="v5e-name"><?php echo esc_html( $product['name'] ); ?></h3>
+
+							<div class="v5e-priceRow">
+								<div class="v5e-price"><?php echo wp_kses_post( $product['price_html'] ); ?></div>
+								<?php if ( $product['difficulty_label'] ) : ?>
+									<div class="v5e-accent"><?php echo esc_html( $product['difficulty_label'] ); ?></div>
+								<?php endif; ?>
+							</div>
+
+							<div class="v5e-buy">
+								<a class="v5e-button" href="<?php echo esc_url( $product['link'] ); ?>"><?php echo esc_html( $args['button_label'] ); ?></a>
+							</div>
+						</article>
+					<?php endforeach; ?>
+				</div>
+			</div>
+		</div>
+		<?php
 	}
 }
