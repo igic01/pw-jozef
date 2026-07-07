@@ -701,8 +701,10 @@
 	}
 
 	.v4p-form-copy h2 {
-		max-width: 330px;
-		font-size: clamp(2.8rem, 13vw, 4rem);
+		width: 100%;
+		max-width: 360px;
+		font-size: clamp(2.25rem, 10vw, 3.25rem);
+		line-height: 0.95;
 	}
 
 	.v4p-form .ff-el-group.v4p-time-hour,
