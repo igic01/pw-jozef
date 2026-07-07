@@ -298,8 +298,8 @@
 }
 
 .v4p-form-layout {
-	display: grid;
-	grid-template-columns: max-content minmax(360px, 548px);
+	display: flex;
+	flex-wrap: nowrap;
 	gap: clamp(96px, 8vw, 140px);
 	align-items: start;
 	justify-content: center;
@@ -309,9 +309,10 @@
 
 .v4p-form-copy {
 	display: grid;
+	flex: 0 0 min-content;
 	gap: 18px;
 	justify-items: center;
-	width: max-content;
+	width: min-content;
 	min-width: 0;
 	overflow: hidden;
 	text-align: center;
@@ -321,7 +322,7 @@
 .v4p-form-copy h2 {
 	display: grid;
 	gap: 0;
-	width: max-content;
+	width: min-content;
 	max-width: none;
 	color: var(--color-red);
 	font-size: clamp(3.15rem, 3.9vw, 4.45rem);
@@ -351,6 +352,7 @@
 }
 
 .v4p-form {
+	flex: 1 1 0;
 	width: 100%;
 	max-width: 100%;
 	min-width: 0;
@@ -642,7 +644,7 @@
 	}
 
 	.v4p-form-layout {
-		grid-template-columns: 1fr;
+		flex-direction: column;
 		gap: 38px;
 	}
 
@@ -661,7 +663,6 @@
 
 @media (max-width: 900px) {
 	.v4p-form-layout {
-		grid-template-columns: 1fr;
 		gap: 34px;
 	}
 }
