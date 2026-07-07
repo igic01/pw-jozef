@@ -668,6 +668,10 @@
 }
 
 @media (max-width: 720px) {
+	.v4p-hero {
+		min-height: 100svh;
+	}
+
 	.v4p-hero::before,
 	.v4p-frame::before,
 	.v4p-modal-dialog::before {
@@ -680,19 +684,39 @@
 	}
 
 	.v4p-hero-content {
-		min-height: auto;
-		padding: 18px 18px 34px;
+		min-height: 100svh;
+		padding: 42px 18px;
 		align-items: center;
 	}
 
 	.v4p-hero-shell {
-		width: 100%;
-		max-width: 100%;
-		padding: 20px 18px;
+		box-sizing: border-box;
+		width: min(100%, 352px);
+		max-width: calc(100vw - 36px);
+		padding: 20px 16px;
 	}
 
 	.v4p-title {
-		font-size: clamp(2.4rem, 14vw, 4.2rem);
+		max-width: 100%;
+		font-size: clamp(1.95rem, 10vw, 3rem);
+		line-height: 0.96;
+		overflow-wrap: normal;
+	}
+
+	.v4p-lead {
+		font-size: 0.92rem;
+		line-height: 1.7;
+	}
+
+	.v4p-heading {
+		font-size: clamp(2rem, 10vw, 3rem);
+		line-height: 0.98;
+	}
+
+	.v4p-card h3,
+	.v4p-modal-body h3 {
+		font-size: clamp(1.5rem, 8vw, 2.25rem);
+		line-height: 1;
 	}
 
 	.v4p-types-grid,
@@ -702,9 +726,15 @@
 
 	.v4p-form-copy h2 {
 		width: 100%;
-		max-width: 360px;
-		font-size: clamp(2.25rem, 10vw, 3.25rem);
-		line-height: 0.95;
+		max-width: 330px;
+		font-size: clamp(1.8rem, 8.2vw, 2.45rem);
+		line-height: 1;
+	}
+
+	.v4p-form-copy {
+		width: 100%;
+		max-width: 330px;
+		overflow: visible;
 	}
 
 	.v4p-form .ff-el-group.v4p-time-hour,
