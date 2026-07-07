@@ -733,8 +733,17 @@
 
 	.v4p-form-copy {
 		width: 100%;
-		max-width: 330px;
 		overflow: visible;
+	}
+
+	.v4p-form .ff_submit_btn_wrapper {
+		text-align: center !important;
+	}
+
+	.v4p-form .ff-btn-submit,
+	.v4p-form button[type="submit"],
+	.v4p-form input[type="submit"] {
+		margin-inline: auto !important;
 	}
 
 	.v4p-form .ff-el-group.v4p-time-hour,
